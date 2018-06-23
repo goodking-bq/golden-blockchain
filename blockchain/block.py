@@ -10,15 +10,34 @@ __date__ = '2018/1/18'
 
 
 class Block(object):
-    """定义块结构"""
+    """
+    定义区块结构
 
-    def __init__(self, data, previous_hash=None):
+        magic_no: 魔法数，总是 0xD9B4BEF9
+        size: 区块大小,到区块结束的字节长度
+        -- header: 区块头 --
+            version: 版本
+            pre_block: 前一区块的hash,新的区块进来时更新
+            time: 时间戳
+            merkle_root: 交易的256位hash值，接受交易时更新
+            bits: 当前的hash， 挖矿难度调整时更新
+            nonce: 随机数
+        -- transaction_counter: 交易数量 --
+        -- transactions: 交易记录 --
+    """
+
+    def __init__(self, data, pre_block=None):
+        self.magic_no = 0xD9B4BEF9
         self.index = uuid.uuid4().hex  # 唯一标识
-        self.timestamp = str(time.time())  # 时间戳
+        self.time = int(time.time())  # 时间戳
         self.data = data  # 数据
-        self.previous_hash = previous_hash  # 上一次的
-        self.proof = None
-        self.current_hash = None
+        self.pre_block = pre_block  # 上一次的
+        self.hash = None
+        self.transaction_counter = 1
+        self.transactions = []
+        self.nonce = None
+        self.merkle_root = None
+        self.version = 1.0
 
     def __repr__(self):
         return 'Block(%s)' % self.json
@@ -29,7 +48,7 @@ class Block(object):
                     proof=self.proof)
 
     @property
-    def json(self):
+    def dumps(self):
         return json.dumps(self.dict)
 
     def loads(self, data):

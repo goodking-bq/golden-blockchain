@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+verify_ssl = true
+url = "https://pypi.org/simple"
+
+[packages]
+click = "*"
+ecdsa = "*"
+"base58check" = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"
